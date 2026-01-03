@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import Icon from '@/components/ui/icon';
+import BriefForm from '@/components/BriefForm';
 
 const bloggers = [
   {
@@ -115,6 +116,8 @@ export default function Index() {
   const [selectedNiche, setSelectedNiche] = useState('all');
   const [budgetRange, setBudgetRange] = useState([50000, 300000]);
   const [audienceRange, setAudienceRange] = useState([100000, 1500000]);
+  const [briefFormOpen, setBriefFormOpen] = useState(false);
+  const [selectedBlogger, setSelectedBlogger] = useState<{ name: string; avatar: string } | null>(null);
 
   const filteredBloggers = bloggers.filter(blogger => {
     const nicheMatch = selectedNiche === 'all' || blogger.niche === selectedNiche;
@@ -127,6 +130,11 @@ export default function Index() {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
     return num.toString();
+  };
+
+  const handleOrderClick = (blogger: typeof bloggers[0]) => {
+    setSelectedBlogger({ name: blogger.name, avatar: blogger.avatar });
+    setBriefFormOpen(true);
   };
 
   return (
@@ -320,7 +328,10 @@ export default function Index() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full gradient-purple border-0 group">
+                  <Button 
+                    className="w-full gradient-purple border-0 group"
+                    onClick={() => handleOrderClick(blogger)}
+                  >
                     Заказать рекламу
                     <Icon name="ArrowRight" size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -416,6 +427,15 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      <BriefForm 
+        open={briefFormOpen} 
+        onClose={() => {
+          setBriefFormOpen(false);
+          setSelectedBlogger(null);
+        }}
+        selectedBlogger={selectedBlogger}
+      />
     </div>
   );
 }
